@@ -5,8 +5,8 @@
 			xsi:noNamespaceSchemaLocation="http://www.m-files.com/schemas/appdef-server-v1.xsd">
   <guid>a5ccc6ad-b38d-4175-bd83-faa8eaaabd03</guid>
   <name>DIPartners.Cambridge.MatchInvoice</name>
-  <description></description>
-  <publisher></publisher>
+  <description>Invoice's detail matching up with PO</description>
+  <publisher>Document Imaging Partners</publisher>
   <version>0.1</version>
   <copyright></copyright>
   <required-mfiles-version>19.9.8227.13</required-mfiles-version>
@@ -14,7 +14,7 @@
     <extension-object>
       <name>DIPartners.Cambridge.MatchInvoice</name>
       <assembly>DIPartners.Cambridge.MatchInvoice.dll</assembly>
-      <class>DIPartners.Cambridge.MatchInvoice.VaultApplication</class>
+      <class>DIPartners.Cambridge.MatchInvoice.VaultApplicaxtion</class>
       <installation-method>Install</installation-method>
       <uninstallation-method>Uninstall</uninstallation-method>
       <initialization-method>Initialize</initialization-method>

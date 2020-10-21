@@ -15,5 +15,14 @@ namespace DIPartners.Cambridge.MatchInvoice
     public class VaultApplication
         : ConfigurableVaultApplicationBase<Configuration>
     {
+        #region Set MFIdentifier
+
+        #endregion
+
+        [StateAction("vState.InvoiceReview")]
+        public void CreateNewInvoice(StateEnvironment env)
+        {
+            var Vault = env.ObjVerEx.Vault;
+        }
     }
 }

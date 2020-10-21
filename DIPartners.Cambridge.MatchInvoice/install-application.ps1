@@ -3,12 +3,12 @@ $appFilePath = "bin\Debug\DIPartners.Cambridge.MatchInvoice.mfappx"
 $appGuid = "a5ccc6ad-b38d-4175-bd83-faa8eaaabd03"
 
 # Target vault
-$vaultName = "Sample Vault"
+$vaultName = "Cambridge Elevating Inc - Sage"
 
 # Connection details 
-$authType = 1 # 1 = MFAuthTypeLoggedOnWindowsUser
-$userName = ""
-$password = ""
+$authType = 3 # 1 = MFAuthTypeLoggedOnWindowsUser,3 = MFAuthTypeSpecificMFilesUser
+$userName = "MFAdmin"
+$password = "K@ml0op$"
 $domain = ""
 $spn = ""
 $protocolSequence = "ncacn_ip_tcp"
