@@ -7,14 +7,14 @@
   <name>DIPartners.Cambridge.MatchInvoice</name>
   <description>Invoice's detail matching up with PO</description>
   <publisher>Document Imaging Partners</publisher>
-  <version>0.1</version>
+  <version>0.2</version>
   <copyright></copyright>
   <required-mfiles-version>19.9.8227.13</required-mfiles-version>
   <extension-objects>
     <extension-object>
       <name>DIPartners.Cambridge.MatchInvoice</name>
       <assembly>DIPartners.Cambridge.MatchInvoice.dll</assembly>
-      <class>DIPartners.Cambridge.MatchInvoice.VaultApplicaxtion</class>
+      <class>DIPartners.Cambridge.MatchInvoice.VaultApplication</class>
       <installation-method>Install</installation-method>
       <uninstallation-method>Uninstall</uninstallation-method>
       <initialization-method>Initialize</initialization-method>
