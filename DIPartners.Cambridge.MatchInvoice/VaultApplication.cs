@@ -168,7 +168,6 @@ namespace DIPartners.Cambridge.MatchInvoice
             // set Name or Title
             var TitleProperties = objVer.Vault.ObjectPropertyOperations.GetProperties(objVer.ObjVer, true);
             var propTitle = TitleProperties.SearchForProperty((int)MFBuiltInPropertyDef.MFBuiltInPropertyDefNameOrTitle);
-
             var nameOrTitlePropertyValue = new PropertyValue()
             {
                 PropertyDef = (int)MFBuiltInPropertyDef.MFBuiltInPropertyDefNameOrTitle
@@ -181,13 +180,26 @@ namespace DIPartners.Cambridge.MatchInvoice
             NewInvoiceLookup.ObjectType = objVer.ObjVer.Type;
             NewInvoiceLookup.Item = objVer.ObjVer.ID;
             NewInvoiceLookup.DisplayValue = TitleProperties.SearchForProperty(InvoiceName_PD).TypedValue.DisplayValue;
+
             var newInvoice = new PropertyValue()
             {
-                PropertyDef = 1058  //(int)MFBuiltInPropertyDef.MFBuiltInPropertyDefNameOrTitle
+                PropertyDef = Invoice_PD.ID      //1058
             };
             newInvoice.Value.SetValue(MFDataType.MFDatatypeLookup, NewInvoiceLookup);
             propertyValues.Add(-1, newInvoice);
 
+            // set PODetail
+            var NewPOLookup = new Lookup();
+            NewPOLookup.ObjectType = ojbPO.ObjVer.Type;
+            NewPOLookup.Item = ojbPO.ObjVer.ID;
+            NewPOLookup.DisplayValue = ojbPO.Title;
+
+            var newPO = new PropertyValue()
+            {
+                PropertyDef = PurchaseOrderDetail_PD.ID      //1177
+            };
+            newPO.Value.SetValue(MFDataType.MFDatatypeLookup, NewPOLookup);
+            propertyValues.Add(-1, newPO);
 
             PropertyValues Inv = objVer.Vault.ObjectPropertyOperations.GetProperties(objVer.ObjVer);
             PropertyValues PO = objVer.Vault.ObjectPropertyOperations.GetProperties(ojbPO.ObjVer);
@@ -196,7 +208,7 @@ namespace DIPartners.Cambridge.MatchInvoice
             propertyValues.Add(-1, GetPropertyValue(PO, OrderedQty_PD, Inv, Quantity_PD));
             propertyValues.Add(-1, GetPropertyValue(PO, UnitPrice_PD, Inv, UnitPrice_PD));
             propertyValues.Add(-1, GetPropertyValue(PO, POLineExtension_PD, Inv, InvoiceLineExtension_PD));
-            propertyValues.Add(-1, GetPropertyValue(PO, PurchaseOrder_PD, Inv, PurchaseOrderDetail_PD));
+           // propertyValues.Add(-1, GetPropertyValue(PO, PurchaseOrder_PD, Inv, PurchaseOrderDetail_PD));
 
             ObjectVersionAndProperties ppts = objVer.Vault.ObjectOperations.CreateNewObject(InvoiceDetail_OT, propertyValues);
 
