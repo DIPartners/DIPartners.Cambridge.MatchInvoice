@@ -84,20 +84,17 @@ namespace DIPartners.Cambridge.MatchInvoice
             var Vault = env.ObjVerEx.Vault;
             var oCurrObjVals = Vault.ObjectPropertyOperations.GetProperties(env.ObjVerEx.ObjVer);
 
-            // Search Current Invoice Number
-            var InvoiceNum = SearchPropertyValue(oCurrObjVals, InvoiceNumber_PD);
-            if (InvoiceNum == "") return;
-
+            // Search Current PO Reference Number of Invoice
             var POReference = SearchPropertyValue(oCurrObjVals, POReference_PD);
             if (POReference == "") return;
 
-            // Get Invoice Data to find PO number
+            // Get Data
             List<ObjVerEx> objInvoices = FindObjects(Vault, InvoiceDetail_CD, Invoice_PD, MFDataType.MFDatatypeLookup, env.ObjVerEx.ObjVer.ID.ToString());
-            List<ObjVerEx> ojbPOs = FindObjects(Vault, PurchaseOrderDetail_CD, PurchaseOrder_PD, MFDataType.MFDatatypeText, POReference);
+            List<ObjVerEx> objPOs = FindObjects(Vault, PurchaseOrderDetail_CD, PurchaseOrder_PD, MFDataType.MFDatatypeText, POReference);
 
             double Invext = 0d;
             double POext = 0d;
-            foreach (var PO in ojbPOs)
+            foreach (var PO in objPOs)
             {
                 POext += Convert.ToDouble(Vault.ObjectPropertyOperations.GetProperties(PO.ObjVer)
                                 .SearchForProperty(POLineExtension_PD).TypedValue.DisplayValue);
@@ -107,9 +104,9 @@ namespace DIPartners.Cambridge.MatchInvoice
             {
                 if (Invext != POext)
                 {
-                    foreach (var ojbPO in ojbPOs)
+                    foreach (var objPO in objPOs)
                     {
-                        CreateNewDetails(env.ObjVerEx, ojbPO);
+                        CreateNewDetails(env.ObjVerEx, objPO);
                     }
                 }
             }
@@ -121,24 +118,15 @@ namespace DIPartners.Cambridge.MatchInvoice
                                     .SearchForProperty(InvoiceLineExtension_PD).TypedValue.DisplayValue);
                 }
 
-                if (objInvoices.Count < ojbPOs.Count || Invext != POext)
+                if (objInvoices.Count < objPOs.Count || Invext != POext)
                 {
-                    foreach (var ojbPO in ojbPOs)
+                    foreach (var objPO in objPOs)
                     {
                         bool isFoundInvoice = false;
                         foreach (var invItem in objInvoices)
                         {
-                            #region What's gonna be in PurchaseOrderDetail
-                            /*if (Vault.ObjectPropertyOperations.GetProperties(ojbPO.ObjVer).SearchForProperty(PurchaseOrderDetailName_PD) ==
-                            Vault.ObjectPropertyOperations.GetProperties(invItem.ObjVer).SearchForProperty(PurchaseOrderDetail_PD))
-                            {
-                                isFoundInvoice = true;
-                                break;
-                            }*/
-                            #endregion
-
-                            if (Vault.ObjectPropertyOperations.GetProperties(ojbPO.ObjVer).SearchForProperty(POLine_PD).TypedValue.DisplayValue ==
-                            Vault.ObjectPropertyOperations.GetProperties(invItem.ObjVer).SearchForProperty(InvoiceLineNumber_PD).TypedValue.DisplayValue)
+                            if (Vault.ObjectPropertyOperations.GetProperties(objPO.ObjVer).SearchForProperty(PurchaseOrderDetailName_PD).TypedValue.DisplayValue ==
+                            Vault.ObjectPropertyOperations.GetProperties(invItem.ObjVer).SearchForProperty(PurchaseOrderDetail_PD).TypedValue.DisplayValue)
                             {
                                 isFoundInvoice = true;
                                 break;
@@ -146,14 +134,14 @@ namespace DIPartners.Cambridge.MatchInvoice
                         }
                         if (!isFoundInvoice)
                         {
-                            CreateNewDetails(env.ObjVerEx, ojbPO);
+                            CreateNewDetails(env.ObjVerEx, objPO);
                         }
                     }
                 }
             }            
         }
 
-        public void CreateNewDetails(ObjVerEx objVer, ObjVerEx ojbPO)
+        public void CreateNewDetails(ObjVerEx objVer, ObjVerEx objPO)
         {
             var propertyValues = new PropertyValues();
 
@@ -176,11 +164,12 @@ namespace DIPartners.Cambridge.MatchInvoice
             propertyValues.Add(-1, nameOrTitlePropertyValue);
 
             // set Invoice
-            var NewInvoiceLookup = new Lookup();
-            NewInvoiceLookup.ObjectType = objVer.ObjVer.Type;
-            NewInvoiceLookup.Item = objVer.ObjVer.ID;
-            NewInvoiceLookup.DisplayValue = TitleProperties.SearchForProperty(InvoiceName_PD).TypedValue.DisplayValue;
-
+            var NewInvoiceLookup = new Lookup()
+            {
+                ObjectType = objVer.ObjVer.Type,
+                Item = objVer.ObjVer.ID,
+                DisplayValue = TitleProperties.SearchForProperty(InvoiceName_PD).TypedValue.DisplayValue
+            };
             var newInvoice = new PropertyValue()
             {
                 PropertyDef = Invoice_PD.ID      //1058
@@ -189,11 +178,12 @@ namespace DIPartners.Cambridge.MatchInvoice
             propertyValues.Add(-1, newInvoice);
 
             // set PODetail
-            var NewPOLookup = new Lookup();
-            NewPOLookup.ObjectType = ojbPO.ObjVer.Type;
-            NewPOLookup.Item = ojbPO.ObjVer.ID;
-            NewPOLookup.DisplayValue = ojbPO.Title;
-
+            var NewPOLookup = new Lookup()
+            {
+                ObjectType = objPO.ObjVer.Type,
+                Item = objPO.ObjVer.ID,
+                DisplayValue = objPO.Title
+            };
             var newPO = new PropertyValue()
             {
                 PropertyDef = PurchaseOrderDetail_PD.ID      //1177
@@ -202,13 +192,12 @@ namespace DIPartners.Cambridge.MatchInvoice
             propertyValues.Add(-1, newPO);
 
             PropertyValues Inv = objVer.Vault.ObjectPropertyOperations.GetProperties(objVer.ObjVer);
-            PropertyValues PO = objVer.Vault.ObjectPropertyOperations.GetProperties(ojbPO.ObjVer);
+            PropertyValues PO = objVer.Vault.ObjectPropertyOperations.GetProperties(objPO.ObjVer);
             propertyValues.Add(-1, GetPropertyValue(PO, POLine_PD, Inv, InvoiceLineNumber_PD));
             propertyValues.Add(-1, GetPropertyValue(PO, POItem_PD, Inv, ItemNumber_PD));
             propertyValues.Add(-1, GetPropertyValue(PO, OrderedQty_PD, Inv, Quantity_PD));
             propertyValues.Add(-1, GetPropertyValue(PO, UnitPrice_PD, Inv, UnitPrice_PD));
             propertyValues.Add(-1, GetPropertyValue(PO, POLineExtension_PD, Inv, InvoiceLineExtension_PD));
-           // propertyValues.Add(-1, GetPropertyValue(PO, PurchaseOrder_PD, Inv, PurchaseOrderDetail_PD));
 
             ObjectVersionAndProperties ppts = objVer.Vault.ObjectOperations.CreateNewObject(InvoiceDetail_OT, propertyValues);
 
@@ -253,6 +242,7 @@ namespace DIPartners.Cambridge.MatchInvoice
 
             return (searchResults.Count != 0) ? searchResults : null;
         }
+
         public string SearchPropertyValue(PropertyValues ppvs, MFIdentifier def, PropertyValue defaultPpt = null)
         {
             var ppt = defaultPpt;
