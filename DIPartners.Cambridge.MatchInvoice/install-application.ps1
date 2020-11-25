@@ -3,7 +3,7 @@ $appFilePath = "bin\Debug\DIPartners.Cambridge.MatchInvoice.mfappx"
 $appGuid = "a5ccc6ad-b38d-4175-bd83-faa8eaaabd03"
 
 # Target vault
-$vaultName = "Cambridge Elevating Inc - Sage"
+$vaultName = "Cambridge Elevating Inc"
 
 # Connection details 
 $authType = 3 # 1 = MFAuthTypeLoggedOnWindowsUser,3 = MFAuthTypeSpecificMFilesUser
