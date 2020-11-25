@@ -83,9 +83,9 @@ namespace DIPartners.Cambridge.MatchInvoice
         {
             var Vault = env.ObjVerEx.Vault;
             var oCurrObjVals = Vault.ObjectPropertyOperations.GetProperties(env.ObjVerEx.ObjVer, true);
-                               
+
             // Search Current PO Reference Number of Invoice
-            var POReference = SearchPropertyValue(oCurrObjVals, POReference_PD);
+            var POReference = GetPropertyValue(oCurrObjVals.SearchForProperty(POReference_PD));
             if (POReference == "") return;
 
             // Get Data
@@ -210,7 +210,7 @@ namespace DIPartners.Cambridge.MatchInvoice
             var ppValue = new PropertyValue();
             ppValue.PropertyDef = InvDef.ID;
 
-            string strVal = GetPropertyType(POPpvs.SearchForProperty(PODef));
+            string strVal = GetPropertyValue(POPpvs.SearchForProperty(PODef));
             if (InvDef == ItemNumber_PD)
             {
                 string[] displayValues = strVal.Split('=');
@@ -237,16 +237,10 @@ namespace DIPartners.Cambridge.MatchInvoice
             return (searchResults.Count != 0) ? searchResults : null;
         }
 
-        public string GetPropertyType(PropertyValue POPty)
+        public string GetPropertyValue(PropertyValue POPty)
         {
             return (POPty.TypedValue.DataType == MFDataType.MFDatatypeLookup) ?
                         POPty.TypedValue.GetLookupID().ToString() : POPty.TypedValue.DisplayValue;
-        }
-
-        public string SearchPropertyValue(PropertyValues ppvs, MFIdentifier def)
-        {
-            var ppt = ppvs.SearchForProperty(def);
-            return GetPropertyType(ppt);
         }
     }
 }
