@@ -190,7 +190,7 @@ namespace DIPartners.Cambridge.MatchInvoice
                 PropertyDef = PurchaseOrderDetail_PD.ID      //1177
             };
             newPO.Value.SetValue(MFDataType.MFDatatypeLookup, NewPOLookup);
-            //propertyValues.Add(-1, newPO);
+            propertyValues.Add(-1, newPO);
 
             PropertyValues PO = objVer.Vault.ObjectPropertyOperations.GetProperties(objPO.ObjVer);
             propertyValues.Add(-1, GetPropertyValue(objVer.Vault, PO, POLine_PD, InvoiceLineNumber_PD));
