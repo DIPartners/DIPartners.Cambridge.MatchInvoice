@@ -78,14 +78,18 @@ namespace DIPartners.Cambridge.MatchInvoice
 
         #endregion
         // Event Handler Before Create New Invoice Finalize
-        [EventHandler(MFEventHandlerType.MFEventHandlerAfterCheckInChangesFinalize, Class = "vClass.Invoice")]
+        [EventHandler(MFEventHandlerType.MFEventHandlerAfterCheckInChangesFinalize, Class = "vClass.InvoiceDetail")]
         public void CreateNewInvoice(EventHandlerEnvironment env)
         {
             var Vault = env.ObjVerEx.Vault;
             var oCurrObjVals = Vault.ObjectPropertyOperations.GetProperties(env.ObjVerEx.ObjVer, true);
+            var InvoiceProperty = oCurrObjVals.SearchForProperty(Invoice_PD).TypedValue.GetValueAsLookup();
 
-            // Search Current PO Reference Number of Invoice
-            var POReference = GetPropertyValue(oCurrObjVals.SearchForProperty(POReference_PD));
+            var InvoiceObjID = new ObjID();
+            InvoiceObjID.SetIDs(InvoiceProperty.ObjectType, InvoiceProperty.Item);
+            var InvoiceObjVer = Vault.ObjectOperations.GetLatestObjVer(InvoiceObjID, false, true);
+            var InvoiceoObjProperties = Vault.ObjectOperations.GetObjectVersionAndProperties(InvoiceObjVer);
+            var POReference = InvoiceoObjProperties.Properties.SearchForProperty(POReference_PD).TypedValue.Value.ToString();
             if (POReference == "") return;
 
             // Get Data
